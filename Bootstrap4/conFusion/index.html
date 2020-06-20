@@ -32,8 +32,9 @@
                     <li class="nav-item"><a class="nav-link" href="./contactus.html"><span class="fa fa-address-card fa-lg"></span> Contact</a></li>
                 </ul>
                 <span class="navbar-text">
-                    <a data-toggle="modal" data-target="#loginModal">
-                    <span class="fa fa-sign-in"></span> Login</a>
+                    <a id="loginButton">
+                        <span class="fa fa-sign-in"></span> Login
+                </a>
                 </span>
             </div>
         </div>
@@ -90,25 +91,25 @@
                     <form>
                         <div class="form-group row">
                             <label for="staticEmail" class="col-sm-3 col-form-label">Number of diners</label>
-                            <div class="col-sm-7">
+                            <div class="col-sm-9">
                                 <div class="row">
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio">1
+                                        <input type="radio" name="optradio"> 1
                                     </label>
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio" checked>2
+                                        <input type="radio" name="optradio" checked> 2
                                     </label>
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio">3
+                                        <input type="radio" name="optradio"> 3
                                     </label>
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio">4
+                                        <input type="radio" name="optradio"> 4
                                     </label>
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio">5
+                                        <input type="radio" name="optradio"> 5
                                     </label>
                                     <label class="radio-inline col-sm-2">
-                                        <input type="radio" name="optradio">6
+                                        <input type="radio" name="optradio"> 6
                                     </label>
                                 </div>
                             </div>
@@ -135,12 +136,20 @@
                                 <input type="time" class="form-control" id="Time" placeholder="Time">
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12 offset-sm-3">
+                                <!-- <div class="col-sm-offset-6"> -->
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary">Reserve</button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
                     </form>
                 </div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary">Reserve</button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -157,7 +166,7 @@
                     <img class="img-fluid" src="img/logo.png" />
                 </div>
                 <div class="col-sm-2 col-12 align-self-center align-items-center">
-                    <a role="button" class="btn btn-block nav-link btn-warning" data-toggle="modal" data-target="#reservationModal">Reserve Table</a>
+                    <a role="button" class="btn btn-block nav-link btn-warning" id="reserveButton">Reserve Table</a>
                 </div>
             </div>
         </div>
@@ -373,16 +382,21 @@
                 interval: 2000
             });
             $("#carouselButton").click(function() {
-                if($("#carouselButton").children("span").hasClass("fa-pause")){
+                if ($("#carouselButton").children("span").hasClass("fa-pause")) {
                     $("#mycarousel").carousel("pause");
                     $("#carouselButton").children("span").removeClass("fa-pause");
                     $("#carouselButton").children("span").addClass("fa-play");
-                }
-                else{
+                } else {
                     $("#mycarousel").carousel("cycle");
                     $("#carouselButton").children("span").removeClass("fa-play");
                     $("#carouselButton").children("span").addClass("fa-pause");
                 }
+            });
+            $("#loginButton").click(function() {
+                $("#loginModal").modal('show');
+            });
+            $("#reserveButton").click(function() {
+                $("#reservationModal").modal('show');
             });
         });
     </script>
