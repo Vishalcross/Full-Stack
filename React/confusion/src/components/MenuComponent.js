@@ -22,7 +22,9 @@ class Menu extends Component {
 		if (dish != null) {
 			console.log(dish);
 			return <DishDetail dish={dish} />;
-		} else return <div></div>;
+		} else {
+			return <div></div>;
+		}
 	}
 
 	render() {

@@ -14,9 +14,9 @@ class DishDetail extends Component {
 				<ul key={comment.id} className="list-unstyled">
 					<li className="mb-2">{comment.comment}</li>
 					<li>
-						-- {comment.author}{" "}
+						-- {comment.author}&nbsp;,&nbsp;
 						{new Date(comment.date).toLocaleDateString(
-							"en-US",
+							"en-IN",
 							options
 						)}
 					</li>
