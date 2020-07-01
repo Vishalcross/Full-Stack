@@ -1,37 +1,22 @@
 import React, { Component } from "react";
 import { Card, CardImg, CardImgOverlay, CardTitle } from "reactstrap";
-import DishDetail from "./DishDetailComponent";
 class Menu extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			selectedDish: null,
-		};
-		console.log("Constructor for menu");
-	}
+	// constructor(props) {
+	// 	super(props);
+	// }
 
 	componentDidMount() {
-		console.log("Component did mount for menu");
-	}
-
-	onDishSelect(dish) {
-		this.setState({ selectedDish: dish });
-	}
-
-	renderDish(dish) {
-		if (dish != null) {
-			console.log(dish);
-			return <DishDetail dish={dish} />;
-		} else {
-			return <div></div>;
-		}
+		// console.log("Component did mount for menu");
 	}
 
 	render() {
 		const menu = this.props.dishes.map((dish) => {
 			return (
 				<div key={dish.id} className="col-12 col-md-5 m-1">
-					<Card onClick={() => this.onDishSelect(dish)}>
+					<Card
+						key={dish.id}
+						onClick={() => this.props.onClick(dish.id)}
+					>
 						<CardImg
 							width="100%"
 							src={dish.image}
@@ -44,11 +29,10 @@ class Menu extends Component {
 				</div>
 			);
 		});
-		console.log("Running menu render");
+		// console.log("Running menu render");
 		return (
 			<div className="container">
 				<div className="row">{menu}</div>
-				{this.renderDish(this.state.selectedDish)}
 			</div>
 		);
 	}
