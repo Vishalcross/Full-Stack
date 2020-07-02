@@ -23,8 +23,6 @@ function RenderMenuItem({ dish, onClick }) {
 }
 
 const Menu = (props) => {
-	// console.log(`Menu Props`);
-	// console.log(props);
 	const menu = props.dishes.map((dish) => {
 		return (
 			<div className="col-12 col-md-5 m-1" key={dish.id}>
@@ -52,6 +50,7 @@ const Menu = (props) => {
 	);
 };
 
+export default Menu;
 // class Menu extends Component {
 // 	// constructor(props) {
 // 	// 	super(props);
@@ -89,8 +88,6 @@ const Menu = (props) => {
 // 		);
 // 	}
 // }
-
-export default Menu;
 
 /*
 Default component stuff
