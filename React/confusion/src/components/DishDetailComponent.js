@@ -18,7 +18,7 @@ import {
 import { Link } from "react-router-dom";
 import { Control, Errors, LocalForm } from "react-redux-form";
 
-class ContactForm extends Component {
+class CommentForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -55,8 +55,12 @@ class ContactForm extends Component {
 
 	handleSubmit(values) {
 		console.log("Current State is: " + JSON.stringify(values));
-		// alert("Current State is: " + JSON.stringify(values));
-		// event.preventDefault();
+		this.props.addComment(
+			this.props.dishId,
+			values.rating,
+			values.author,
+			values.comment
+		);
 	}
 
 	toggleModal() {
@@ -131,15 +135,33 @@ class ContactForm extends Component {
 										model=".rating"
 										id="rating"
 										name="rating"
-										placeholder="Rating 1-5"
 										className="form-control"
+										validators={{
+											required,
+										}}
 									>
+										<option
+											value="blank"
+											selected
+											disabled
+											hidden
+										>
+											Rate the dish from 1-5
+										</option>
 										<option value="5">5</option>
 										<option value="4">4</option>
 										<option value="3">3</option>
 										<option value="2">2</option>
 										<option value="1">1</option>
 									</Control.select>
+									<Errors
+										className="text-danger"
+										model=".rating"
+										show="touched"
+										messages={{
+											required: "Required",
+										}}
+									/>
 								</Col>
 							</Row>
 							<Row className="form-group">
@@ -212,7 +234,7 @@ class ContactForm extends Component {
 	}
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
 	if (comments != null) {
 		console.log("comments");
 		console.log(comments);
@@ -233,7 +255,7 @@ function RenderComments({ comments }) {
 			<div className="col-12 col-md-auto m-1">
 				<h4>Comments</h4>
 				{comments}
-				<ContactForm />
+				<CommentForm dishId={dishId} addComment={addComment} />
 			</div>
 		);
 	} else return <div></div>;
@@ -285,7 +307,11 @@ const DishDetail = (props) => {
 					<RenderDish dish={props.dish} />
 				</div>
 				<div className="col-12 col-md-5 m-1">
-					<RenderComments comments={props.comments} />
+					<RenderComments
+						comments={props.comments}
+						addComment={props.addComment}
+						dishId={props.dish.id}
+					/>
 				</div>
 			</div>
 		</div>
