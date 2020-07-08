@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
 	Card,
 	CardImg,
@@ -7,8 +7,210 @@ import {
 	CardText,
 	Breadcrumb,
 	BreadcrumbItem,
+	Modal,
+	ModalHeader,
+	ModalBody,
+	Label,
+	Button,
+	Row,
+	Col,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Control, Errors, LocalForm } from "react-redux-form";
+
+class ContactForm extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isModalOpen: false,
+			firstname: "",
+			lastname: "",
+			telnum: "",
+			email: "",
+			agree: false,
+			contactType: "Tel.",
+			message: "",
+			touched: {
+				firstname: false,
+				lastname: false,
+			},
+		};
+		this.toggleModal = this.toggleModal.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleBlur = this.handleBlur.bind(this);
+		this.handleInputChange = this.handleInputChange.bind(this);
+	}
+
+	handleInputChange(event) {
+		const target = event.target;
+		const value =
+			target.type === "checkbox" ? target.checked : target.value;
+		const name = target.name;
+
+		console.log(`Event is ${target.value}`);
+		this.setState({
+			[name]: value,
+		});
+	}
+
+	handleSubmit(values) {
+		console.log("Current State is: " + JSON.stringify(values));
+		// alert("Current State is: " + JSON.stringify(values));
+		// event.preventDefault();
+	}
+
+	toggleModal() {
+		this.setState({
+			isModalOpen: !this.state.isModalOpen,
+		});
+	}
+
+	handleBlur = (field) => (event) => {
+		this.setState({
+			touched: { ...this.state.touched, [field]: true },
+		});
+	};
+
+	validate(firstname, lastname, telnum, email) {
+		let errors = {
+			firstname: "",
+			lastname: "",
+			telnum: "",
+			email: "",
+		};
+		// if (this.state.touched.firstname && firstname.length < 2) {
+		// 	errors.firstname =
+		// 		"First Name should be at least 2 characters long";
+		// } else if (firstname.length > 20) {
+		// 	errors.firstname = "First Name should be at most 20 characters";
+		// }
+		// if (this.state.touched.lastname && lastname.length < 2) {
+		// 	errors.lastname = "Last Name should be at least 2 characters long";
+		// } else if (lastname.length > 20) {
+		// 	errors.lastname = "Last Name should be at most 20 characters";
+		// }
+		return errors;
+	}
+
+	render() {
+		// const errors = this.validate(
+		// 	this.state.firstname,
+		// 	this.state.lastname,
+		// 	this.state.telnum,
+		// 	this.state.email
+		// );
+		const required = (val) => val && val.length;
+		const maxLength = (len) => (val) => !val || val.length <= len;
+		const minLength = (len) => (val) => val && val.length >= len;
+		return (
+			<div>
+				<Button
+					className="btn btn-light"
+					outline
+					onClick={this.toggleModal}
+				>
+					<span className="fa fa-pencil fa-lg"></span> Submit Comment
+				</Button>
+				<Modal
+					isOpen={this.state.isModalOpen}
+					toggle={this.toggleModal}
+				>
+					<ModalHeader toggle={this.toggleModal}>
+						Submit Comment
+					</ModalHeader>
+					<ModalBody>
+						<LocalForm
+							onSubmit={(values) => this.handleSubmit(values)}
+						>
+							<Row className="form-group">
+								<Label md={12} htmlFor="rating">
+									Rating
+								</Label>
+								<Col md={12}>
+									<Control.select
+										model=".rating"
+										id="rating"
+										name="rating"
+										placeholder="Rating 1-5"
+										className="form-control"
+									>
+										<option value="5">5</option>
+										<option value="4">4</option>
+										<option value="3">3</option>
+										<option value="2">2</option>
+										<option value="1">1</option>
+									</Control.select>
+								</Col>
+							</Row>
+							<Row className="form-group">
+								<Label md={12} htmlFor="author">
+									Your Name
+								</Label>
+								<Col md={12}>
+									<Control.text
+										model=".author"
+										id="author"
+										name="author"
+										placeholder="Your Name"
+										className="form-control"
+										validators={{
+											required,
+											minLength: minLength(3),
+											maxLength: maxLength(15),
+										}}
+									/>
+									<Errors
+										className="text-danger"
+										model=".author"
+										show="touched"
+										messages={{
+											minLength:
+												"Must be greater than 3 characters",
+											maxLength:
+												"Must be 15 characters or less",
+										}}
+									/>
+								</Col>
+							</Row>
+							<Row className="form-group">
+								<Label md={12} htmlFor="comment" md={2}>
+									Comment
+								</Label>
+								<Col md={12}>
+									<Control.textarea
+										model=".comment"
+										id="comment"
+										name="comment"
+										rows="6"
+										className="form-control"
+										validators={{
+											required,
+										}}
+									/>
+									<Errors
+										className="text-danger"
+										model=".comment"
+										show="touched"
+										messages={{
+											required: "Required",
+										}}
+									/>
+								</Col>
+							</Row>
+							<Row className="form-group">
+								<Col md={{ size: 10 }}>
+									<Button type="submit" color="primary">
+										Submit
+									</Button>
+								</Col>
+							</Row>
+						</LocalForm>
+					</ModalBody>
+				</Modal>
+			</div>
+		);
+	}
+}
 
 function RenderComments({ comments }) {
 	if (comments != null) {
@@ -28,9 +230,10 @@ function RenderComments({ comments }) {
 			</ul>
 		));
 		return (
-			<div className="col-12 col-md-5 m-1">
+			<div className="col-12 col-md-auto m-1">
 				<h4>Comments</h4>
 				{comments}
+				<ContactForm />
 			</div>
 		);
 	} else return <div></div>;
@@ -40,7 +243,7 @@ function RenderDish({ dish }) {
 	// console.log("Recieved dish");
 	// console.log(dish);
 	return (
-		<div className="col-12 col-md-5 m-1">
+		<div className="col-12 col-md-auto m-1">
 			<Card>
 				<CardImg top src={dish.image} alt={dish.name} />
 				<CardBody>
