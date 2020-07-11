@@ -17,6 +17,8 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { Control, Errors, LocalForm } from "react-redux-form";
+import { Loading } from "./LoadingComponent";
+import { baseUrl } from "../shared/baseUrl";
 
 class CommentForm extends Component {
 	constructor(props) {
@@ -55,7 +57,9 @@ class CommentForm extends Component {
 
 	handleSubmit(values) {
 		console.log("Current State is: " + JSON.stringify(values));
-		this.props.addComment(
+		console.log(this.props);
+		this.toggleModal();
+		this.props.postComment(
 			this.props.dishId,
 			values.rating,
 			values.author,
@@ -82,17 +86,6 @@ class CommentForm extends Component {
 			telnum: "",
 			email: "",
 		};
-		// if (this.state.touched.firstname && firstname.length < 2) {
-		// 	errors.firstname =
-		// 		"First Name should be at least 2 characters long";
-		// } else if (firstname.length > 20) {
-		// 	errors.firstname = "First Name should be at most 20 characters";
-		// }
-		// if (this.state.touched.lastname && lastname.length < 2) {
-		// 	errors.lastname = "Last Name should be at least 2 characters long";
-		// } else if (lastname.length > 20) {
-		// 	errors.lastname = "Last Name should be at most 20 characters";
-		// }
 		return errors;
 	}
 
@@ -234,7 +227,7 @@ class CommentForm extends Component {
 	}
 }
 
-function RenderComments({ comments, addComment, dishId }) {
+function RenderComments({ comments, postComment, dishId }) {
 	if (comments != null) {
 		console.log("comments");
 		console.log(comments);
@@ -255,7 +248,7 @@ function RenderComments({ comments, addComment, dishId }) {
 			<div className="col-12 col-md-auto m-1">
 				<h4>Comments</h4>
 				{comments}
-				<CommentForm dishId={dishId} addComment={addComment} />
+				<CommentForm dishId={dishId} postComment={postComment} />
 			</div>
 		);
 	} else return <div></div>;
@@ -267,7 +260,7 @@ function RenderDish({ dish }) {
 	return (
 		<div className="col-12 col-md-auto m-1">
 			<Card>
-				<CardImg top src={dish.image} alt={dish.name} />
+				<CardImg top src={baseUrl + dish.image} alt={dish.name} />
 				<CardBody>
 					<CardTitle>{dish.name}</CardTitle>
 					<CardText>{dish.description}</CardText>
@@ -288,80 +281,53 @@ const DishDetail = (props) => {
 	// 		</div>
 	// 	</div>
 	// );
-	return (
-		<div className="container">
-			<div className="row">
-				<Breadcrumb>
-					<BreadcrumbItem>
-						<Link to="/menu">Menu</Link>
-					</BreadcrumbItem>
-					<BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
-				</Breadcrumb>
-				<div className="col-12">
-					<h3>{props.dish.name}</h3>
-					<hr />
+	if (props.isLoading) {
+		return (
+			<div className="container">
+				<div className="row">
+					<Loading />
 				</div>
 			</div>
-			<div className="row">
-				<div className="col-12 col-md-5 m-1">
-					<RenderDish dish={props.dish} />
-				</div>
-				<div className="col-12 col-md-5 m-1">
-					<RenderComments
-						comments={props.comments}
-						addComment={props.addComment}
-						dishId={props.dish.id}
-					/>
+		);
+	} else if (props.errMess) {
+		return (
+			<div className="container">
+				<div className="row">
+					<h4>{props.errMess}</h4>
 				</div>
 			</div>
-		</div>
-	);
+		);
+	} else if (props.dish != null) {
+		return (
+			<div className="container">
+				<div className="row">
+					<Breadcrumb>
+						<BreadcrumbItem>
+							<Link to="/menu">Menu</Link>
+						</BreadcrumbItem>
+						<BreadcrumbItem active>
+							{props.dish.name}
+						</BreadcrumbItem>
+					</Breadcrumb>
+					<div className="col-12">
+						<h3>{props.dish.name}</h3>
+						<hr />
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-12 col-md-5 m-1">
+						<RenderDish dish={props.dish} />
+					</div>
+					<div className="col-12 col-md-5 m-1">
+						<RenderComments
+							comments={props.comments}
+							postComment={props.postComment}
+							dishId={props.dish.id}
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
 };
-// class DishDetail extends Component {
-// 	// constructor(props) {
-// 	// 	super(props);
-// 	// }
-
-// 	renderComments(comments) {
-// 		if (comments != null) {
-// 			return comments.map((comment) => (
-// 				<ul key={comment.id} className="list-unstyled">
-// 					<li className="mb-2">{comment.comment}</li>
-// 					<li>
-// 						-- {comment.author}&nbsp;,&nbsp;
-// 						{new Intl.DateTimeFormat("en-IN", {
-// 							year: "numeric",
-// 							month: "short",
-// 							day: "2-digit",
-// 						}).format(new Date(Date.parse(comment.date)))}
-// 					</li>
-// 				</ul>
-// 			));
-// 		} else return <div></div>;
-// 	}
-
-// 	render() {
-// 		let dish = this.props.dish;
-// 		return (
-// 			<div className="container">
-// 				<div className="row">
-// 					<div className="col-12 col-md-5 m-1">
-// 						<Card>
-// 							<CardImg top src={dish.image} alt={dish.name} />
-// 							<CardBody>
-// 								<CardTitle>{dish.name}</CardTitle>
-// 								<CardText>{dish.description}</CardText>
-// 							</CardBody>
-// 						</Card>
-// 					</div>
-// 					<div className="col-12 col-md-5 m-1">
-// 						<h4>Comments</h4>
-// 						{this.renderComments(dish.comments)}
-// 					</div>
-// 				</div>
-// 			</div>
-// 		);
-// 	}
-// }
-
 export default DishDetail;
