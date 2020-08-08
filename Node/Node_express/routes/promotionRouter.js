@@ -1,10 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const dishRouter = express.Router();
+const promotionRouter = express.Router();
 
-dishRouter.use(bodyParser.json());
+promotionRouter.use(bodyParser.json());
 
-dishRouter
+promotionRouter
 	.route("/")
 	.all((req, res, next) => {
 		res.statusCode = 200;
@@ -12,7 +12,7 @@ dishRouter
 		next();
 	})
 	.get((req, res, next) => {
-		res.end("Will send all the dishes back!");
+		res.end("Will send all the promotions back!");
 	})
 	.post((req, res, next) => {
 		res.end(`Adding ${req.body.name} and ${req.body.description}`);
@@ -23,30 +23,32 @@ dishRouter
 	})
 
 	.delete((req, res, next) => {
-		res.end(`Deleting all the dishes`);
+		res.end(`Deleting all the promotions`);
 	});
 
-dishRouter
-	.route("/:dishId")
+promotionRouter
+	.route("/:promotionId")
 	.all((req, res, next) => {
 		res.statusCode = 200;
 		res.setHeader("Content-Type", "text/plain");
 		next();
 	})
 	.get((req, res, next) => {
-		res.end("Will send this dish" + req.params.dishId + " back!");
+		res.end("Will send this promotion" + req.params.promotionId + " back!");
 	})
 	.post((req, res, next) => {
-		res.end(`POST operation not supported on /dishes/${req.params.dishId}`);
+		res.end(
+			`POST operation not supported on /promotions/${req.params.promotionId}`
+		);
 	})
 	.put((req, res, next) => {
 		res.statusCode = 403;
 		res.end(
-			`Will update the dish ${req.body.name} and ${req.body.description}`
+			`Will update the promotion ${req.body.name} and ${req.body.description}`
 		);
 	})
 
 	.delete((req, res, next) => {
-		res.end(`Deleting the dish ${req.params.dishId}`);
+		res.end(`Deleting the promotion ${req.params.promotionId}`);
 	});
-module.exports = dishRouter;
+module.exports = promotionRouter;
