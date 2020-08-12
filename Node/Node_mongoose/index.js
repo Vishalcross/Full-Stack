@@ -8,16 +8,30 @@ connection.then((db) => {
 	var newDish = Dishes({
 		name: "Uthapizza",
 		description: "Stupid dish",
-	});
-	newDish
+	})
 		.save()
 		.then((dish) => {
 			console.log(dish);
-			return Dishes.find({}).exec();
+			return Dishes.findByIdAndUpdate(
+				dish._id,
+				{
+					$set: { description: "Updated" },
+				},
+				{ new: true }
+			).exec();
 		})
-		.then((dishes) => {
-			console.log(dishes);
-			return Dishes.remove({});
+		.then((dish) => {
+			console.log(dish);
+			dish.comments.push({
+				rating: 5,
+				comment: "Excellent dish",
+				author: "Me",
+			});
+			return dish.save();
+		})
+		.then((dish) => {
+			console.log(dish);
+			return Dishes.deleteMany({});
 		})
 		.then(() => {
 			return mongoose.connection.close();
