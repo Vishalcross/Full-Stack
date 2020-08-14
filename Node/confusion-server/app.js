@@ -3,14 +3,25 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-
+const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const dishRouter = require("./routes/dishRouter");
 const promotionsRouter = require("./routes/promotionRouter");
 const leaderRouter = require("./routes/leaderRouter");
+const Dishes = require("./models/dishes");
 const app = express();
+const url = "mongodb://127.0.0.1:27017/confusion";
 
+const connect = mongoose.connect(url);
+connect.then(
+	(db) => {
+		console.log("Connected to the server");
+	},
+	(err) => {
+		console.log(err);
+	}
+);
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
