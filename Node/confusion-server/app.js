@@ -16,6 +16,8 @@ const leaderRouter = require("./routes/leaderRouter");
 const Dishes = require("./models/dishes");
 const app = express();
 const url = "mongodb://127.0.0.1:27017/confusion";
+const passport = require("passport");
+const authenticate = require("./authenticate");
 
 const connect = mongoose.connect(url);
 // const sequelize = new Sequelize(
@@ -58,7 +60,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(
     express.urlencoded({
-        extended: false,
+        extended: false
     })
 );
 // app.use(cookieParser("12345-67890-12345-67890"));
@@ -68,56 +70,28 @@ app.use(
         secret: "12345-67890-12345-67890",
         saveUninitialized: false,
         resave: false,
-        store: new FileStore(),
+        store: new FileStore()
     })
 );
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 function auth(req, res, next) {
-    console.log(req.session);
-    if (!req.session.user) {
-        console.log("There are no cookies");
-        var authHeader = req.headers.authorization;
-        if (!authHeader) {
-            var err = new Error("You are not authenticated!");
-            res.setHeader("WWW-Authenticate", "Basic");
-            err.status = 401;
-            next(err);
-            return;
-        }
-
-        var auth = new Buffer.from(authHeader.split(" ")[1], "base64")
-            .toString()
-            .split(":");
-        var user = auth[0];
-        var pass = auth[1];
-        if (user == "admin" && pass == "password") {
-            req.session.user = "admin";
-
-            next(); // authorized
-        } else {
-            var err = new Error("You are not authenticated!");
-            res.setHeader("WWW-Authenticate", "Basic");
-            err.status = 401;
-            next(err);
-        }
+    if (!req.user) {
+        var err = new Error("You are not authenticated");
+        err.status = 403;
+        return next(err);
     } else {
-        console.log("There are cookies");
-        if (req.session.user === "admin") {
-            next();
-        } else {
-            var err = "You are not authenticated";
-            err.status = 401;
-            next(err);
-        }
+        next();
     }
 }
 
-// app.use(auth);
+app.use(auth);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/leaders", leaderRouter);
 app.use("/promotions", promotionsRouter);
 app.use("/dishes", dishRouter);
@@ -146,12 +120,12 @@ app.use("/dishes", dishRouter);
 //     }
 // });
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get("env") === "development" ? err : {};
