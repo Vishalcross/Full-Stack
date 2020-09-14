@@ -18,8 +18,8 @@ const app = express();
 const url = "mongodb://127.0.0.1:27017/confusion";
 const passport = require("passport");
 const authenticate = require("./authenticate");
-
-const connect = mongoose.connect(url);
+const config = require("./config");
+const connect = mongoose.connect(config.mongoUrl);
 // const sequelize = new Sequelize(
 //     "postgres://postgres:admin@localhost:5432/HRMS"
 // );
@@ -64,31 +64,18 @@ app.use(
     })
 );
 // app.use(cookieParser("12345-67890-12345-67890"));
-app.use(
-    session({
-        name: "session-id",
-        secret: "12345-67890-12345-67890",
-        saveUninitialized: false,
-        resave: false,
-        store: new FileStore()
-    })
-);
+// app.use(
+//     session({
+//         name: "session-id",
+//         secret: "12345-67890-12345-67890",
+//         saveUninitialized: false,
+//         resave: false,
+//         store: new FileStore()
+//     })
+// );
 app.use(passport.initialize());
-app.use(passport.session());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-
-function auth(req, res, next) {
-    if (!req.user) {
-        var err = new Error("You are not authenticated");
-        err.status = 403;
-        return next(err);
-    } else {
-        next();
-    }
-}
-
-app.use(auth);
 
 app.use(express.static(path.join(__dirname, "public")));
 
