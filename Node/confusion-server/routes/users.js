@@ -6,7 +6,7 @@ const passport = require("passport");
 const authenticate = require("../authenticate");
 router.use(bodyParser.json());
 /* GET users listing. */
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
     res.send("Respond with a resource");
 });
 
@@ -38,7 +38,9 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", passport.authenticate("local"), (req, res, next) => {
-    let token = authenticate.getToken({ _id: req.user._id });
+    let token = authenticate.getToken({
+        _id: req.user._id
+    });
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.json({
