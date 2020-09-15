@@ -15,6 +15,18 @@ const promotionsRouter = require("./routes/promotionRouter");
 const leaderRouter = require("./routes/leaderRouter");
 const Dishes = require("./models/dishes");
 const app = express();
+
+app.all("*", (req, res, next) => {
+    if (req.secure) {
+        return next();
+    } else {
+        res.redirect(
+            307,
+            "https://" + req.hostname + ":" + app.get("secureport") + req.url
+        );
+    }
+});
+
 const url = "mongodb://127.0.0.1:27017/confusion";
 const passport = require("passport");
 const authenticate = require("./authenticate");
@@ -107,12 +119,12 @@ app.use("/dishes", dishRouter);
 //     }
 // });
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get("env") === "development" ? err : {};
