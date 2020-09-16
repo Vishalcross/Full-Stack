@@ -13,7 +13,6 @@ const usersRouter = require("./routes/users");
 const dishRouter = require("./routes/dishRouter");
 const promotionsRouter = require("./routes/promotionRouter");
 const leaderRouter = require("./routes/leaderRouter");
-const uploadRouter = require("./routes/uploadRouter");
 const Dishes = require("./models/dishes");
 const app = express();
 
@@ -95,7 +94,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/leaders", leaderRouter);
 app.use("/promotions", promotionsRouter);
 app.use("/dishes", dishRouter);
-app.use("/imageUpload", uploadRouter);
 // app.post("/user", async (req, res) => {
 //     try {
 //         const newUser = new User(req.body);
